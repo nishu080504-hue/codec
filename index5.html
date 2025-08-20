@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Extended Social Media Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * {margin: 0; padding: 0; box-sizing: border-box;}
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--bg, #f5f6fa);
+      color: var(--text, #333);
+      transition: all 0.3s ease;
+    }
+    header {background: #4e73df; color: white; padding: 20px; text-align: center;}
+    .container {width: 90%; margin: 20px auto;}
+    .cards {display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;}
+    .card {
+      background: white; padding: 20px; border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1); text-align: center;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+    .dark .card {background: #2c2c2c; color: #eee;}
+    .card h2 {font-size: 24px; margin-bottom: 10px;}
+    .card p {font-size: 14px; color: #666;}
+    .dark .card p {color: #aaa;}
+    canvas {margin-top: 20px; background: #fff; padding: 15px; border-radius: 10px;}
+    .dark canvas {background: #333;}
+    .controls {display: flex; justify-content: space-between; align-items: center; margin: 20px 0;}
+    button {
+      padding: 8px 14px; border: none; border-radius: 6px;
+      cursor: pointer; background: #4e73df; color: #fff; font-size: 14px;
+    }
+    button:hover {opacity: 0.9;}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📊 Social Media Dashboard</h1>
+    <p>Track & analyze metrics across platforms</p>
+  </header>
+
+  <div class="container">
+    <div class="controls">
+      <button onclick="exportCSV()">⬇️ Export CSV</button>
+      <button onclick="toggleTheme()">🌙 Toggle Dark Mode</button>
+    </div>
+
+    <section class="cards">
+      <div class="card"><h2 id="followers">12.4K</h2><p>Total Followers</p></div>
+      <div class="card"><h2 id="likes">8.7K</h2><p>Total Likes</p></div>
+      <div class="card"><h2 id="comments">2.1K</h2><p>Total Comments</p></div>
+      <div class="card"><h2 id="engagement">5.4%</h2><p>Engagement Rate</p></div>
+    </section>
+
+    <canvas id="followerChart"></canvas>
+    <canvas id="engagementChart"></canvas>
+    <canvas id="growthChart"></canvas>
+  </div>
+
+  <script>
+    // Mock Data (replace with API later)
+    const platforms = ["Instagram", "Twitter", "YouTube", "Facebook"];
+    const followers = [5000, 2500, 3000, 1900];
+    const engagementRates = [6.2, 4.8, 5.5, 3.9];
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
+    const growthData = {
+      Instagram: [4000, 4200, 4500, 4700, 4900, 5000],
+      Twitter: [2000, 2100, 2200, 2300, 2400, 2500],
+      YouTube: [2500, 2600, 2700, 2800, 2900, 3000],
+      Facebook: [1500, 1600, 1700, 1800, 1850, 1900],
+    };
+
+    // Followers Bar Chart
+    new Chart(document.getElementById("followerChart"), {
+      type: "bar",
+      data: {
+        labels: platforms,
+        datasets: [{
+          label: "Followers",
+          data: followers,
+          backgroundColor: ["#e1306c", "#1da1f2", "#ff0000", "#4267B2"]
+        }]
+      },
+      options: {responsive: true, plugins: {legend: {display: false}}, scales: {y: {beginAtZero: true}}}
+    });
+
+    // Engagement Pie Chart
+    new Chart(document.getElementById("engagementChart"), {
+      type: "pie",
+      data: {
+        labels: platforms,
+        datasets: [{
+          label: "Engagement Rate",
+          data: engagementRates,
+          backgroundColor: ["#e1306c", "#1da1f2", "#ff0000", "#4267B2"]
+        }]
+      }
+    });
+
+    // Growth Line Chart
+    new Chart(document.getElementById("growthChart"), {
+      type: "line",
+      data: {
+        labels: months,
+        datasets: platforms.map((platform, i) => ({
+          label: platform,
+          data: growthData[platform],
+          borderColor: ["#e1306c", "#1da1f2", "#ff0000", "#4267B2"][i],
+          fill: false
+        }))
+      },
+      options: {responsive: true, plugins: {legend: {position: "top"}}, scales: {y: {beginAtZero: true}}}
+    });
+
+    // CSV Export
+    function exportCSV() {
+      let csv = "Platform,Followers,Engagement Rate (%)\n";
+      platforms.forEach((p, i) => {
+        csv += `${p},${followers[i]},${engagementRates[i]}\n`;
+      });
+      const blob = new Blob([csv], {type: "text/csv"});
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "social_media_metrics.csv";
+      link.click();
+    }
+
+    // Dark Mode Toggle
+    function toggleTheme() {
+      document.body.classList.toggle("dark");
+      if (document.body.classList.contains("dark")) {
+        document.body.style.setProperty("--bg", "#121212");
+        document.body.style.setProperty("--text", "#fff");
+      } else {
+        document.body.style.setProperty("--bg", "#f5f6fa");
+        document.body.style.setProperty("--text", "#333");
+      }
+    }
+
+    // API Placeholder (for future integration)
+    async function fetchYouTubeSubscribers() {
+      // Example placeholder: Replace with YouTube API call
+      console.log("Fetch YouTube subscribers from API here...");
+    }
+  </script>
+</body>
+</html>
